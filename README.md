@@ -253,6 +253,20 @@ MILVUS_PORT=19530
 RAG_TOP_K=3
 CHUNK_MAX_SIZE=800
 CHUNK_OVERLAP=100
+
+# MCP 配置
+# 本地模拟 CLS MCP
+MCP_CLS_TRANSPORT=streamable-http
+MCP_CLS_URL=http://localhost:8003/mcp
+
+# 腾讯云 CLS MCP（MCP 市场 SSE 托管服务）
+# 将下面两项替换为你的专属连接，注意不要提交到 Git 仓库
+# MCP_CLS_TRANSPORT=sse
+# MCP_CLS_URL=https://mcp-api.tencent-cloud.com/sse/your-private-id
+
+# 本地监控 MCP
+MCP_MONITOR_TRANSPORT=streamable-http
+MCP_MONITOR_URL=http://localhost:8004/mcp
 ```
 
 ## 🎯 AIOps 智能运维

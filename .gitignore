@@ -43,6 +43,7 @@ poetry.lock
 .codebuddy/
 
 # Environment
+.env
 .env.local
 
 # Logs
@@ -77,4 +78,3 @@ dmypy.json
 
 # Ruff
 .ruff_cache/
-
