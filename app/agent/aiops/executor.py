@@ -3,10 +3,10 @@ Executor 节点：执行单个步骤
 基于 LangGraph 官方教程实现
 """
 
+import json
 from typing import Dict, Any
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_qwq import ChatQwen
-from langgraph.prebuilt import ToolNode
 from loguru import logger
 
 from app.config import config
@@ -57,9 +57,6 @@ async def executor(state: PlanExecuteState) -> Dict[str, Any]:
         )
         llm_with_tools = llm.bind_tools(all_tools)
 
-        # 创建工具节点（自动执行工具调用）
-        tool_node = ToolNode(all_tools)
-
         # 构建消息（只包含当前步骤，避免原始任务干扰）
         messages = [
             SystemMessage(content="""你是一个能力强大的助手，负责执行具体的任务步骤。
@@ -86,13 +83,12 @@ async def executor(state: PlanExecuteState) -> Dict[str, Any]:
         if hasattr(llm_response, "tool_calls") and llm_response.tool_calls:
             logger.info(f"检测到 {len(llm_response.tool_calls)} 个工具调用")
             
-            # 使用 ToolNode 自动执行工具
-            messages.append(llm_response)
-            tool_messages = await tool_node.ainvoke({"messages": messages})
-            
-            # 第三步：将工具结果返回给 LLM 生成最终答案
-            messages.extend(tool_messages["messages"])
-            final_response = await llm_with_tools.ainvoke(messages)
+            tool_results = await _run_tool_calls(llm_response.tool_calls, all_tools)
+            tool_context = "\n\n".join(tool_results)
+            final_response = await llm.ainvoke([
+                *messages,
+                HumanMessage(content=f"Tool execution results:\n{tool_context}\n\nPlease summarize the current step result based only on the tool results above.")
+            ])
             result = final_response.content if hasattr(final_response, 'content') else str(final_response)
         else:
             # 没有工具调用，直接使用 LLM 的输出
@@ -113,3 +109,45 @@ async def executor(state: PlanExecuteState) -> Dict[str, Any]:
             "plan": plan[1:],
             "past_steps": [(task, f"执行失败: {str(e)}")],
         }
+
+
+async def _run_tool_calls(tool_calls: list, tools: list) -> list[str]:
+    tool_by_name = {getattr(tool, "name", str(tool)): tool for tool in tools}
+    results: list[str] = []
+
+    for call in tool_calls:
+        name = call.get("name") if isinstance(call, dict) else getattr(call, "name", None)
+        args = call.get("args", {}) if isinstance(call, dict) else getattr(call, "args", {})
+
+        if not name:
+            results.append(f"Unknown tool call: {_stringify_tool_result(call)}")
+            continue
+
+        tool = tool_by_name.get(name)
+        if tool is None:
+            results.append(f"Tool {name} is not available")
+            continue
+
+        try:
+            logger.info(f"Executing tool manually: {name}, args={args}")
+            if hasattr(tool, "ainvoke"):
+                value = await tool.ainvoke(args or {})
+            else:
+                value = tool.invoke(args or {})
+            results.append(f"Tool {name} result:\n{_stringify_tool_result(value)}")
+        except Exception as e:
+            logger.exception(f"Tool {name} execution failed: {e}")
+            results.append(f"Tool {name} failed: {e}")
+
+    return results
+
+
+def _stringify_tool_result(value: Any) -> str:
+    if hasattr(value, "content"):
+        value = getattr(value, "content")
+    if isinstance(value, (dict, list, tuple)):
+        try:
+            return json.dumps(value, ensure_ascii=False, default=str)
+        except TypeError:
+            return str(value)
+    return str(value)
