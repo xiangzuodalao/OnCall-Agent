@@ -125,13 +125,6 @@ timeout /t 2 /nobreak >nul
 echo [成功] CLS MCP 服务已启动
 echo.
 
-REM 启动 Monitor MCP 服务
-echo [6/6] 启动 Monitor MCP 服务...
-start "Monitor MCP Server" /min %PYTHON_CMD% mcp_servers/monitor_server.py
-timeout /t 2 /nobreak >nul
-echo [成功] Monitor MCP 服务已启动
-echo.
-
 REM 启动 FastAPI 服务
 echo [7/8] 启动 FastAPI 服务...
 start "SuperBizAgent API" %PYTHON_CMD% -m uvicorn app.main:app --host 0.0.0.0 --port 9900
@@ -168,7 +161,6 @@ echo.
 echo 查看日志:
 echo   - FastAPI: logs\app_*.log（Loguru 日志，按天轮转）
 echo   - CLS MCP: type mcp_cls.log
-echo   - Monitor: type mcp_monitor.log
 echo 停止服务: stop-windows.bat
 echo ====================================
 pause

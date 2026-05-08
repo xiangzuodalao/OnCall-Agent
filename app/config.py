@@ -45,22 +45,17 @@ class Settings(BaseSettings):
     # MCP 服务配置
     mcp_cls_transport: str = "streamable-http"
     mcp_cls_url: str = "http://localhost:8003/mcp"
-    mcp_monitor_transport: str = "streamable-http"
-    mcp_monitor_url: str = "http://localhost:8004/mcp"
 
     @property
     def mcp_servers(self) -> Dict[str, Dict[str, Any]]:
         """获取完整的 MCP 服务器配置"""
-        return {
+        servers: Dict[str, Dict[str, Any]] = {
             "cls": {
                 "transport": self.mcp_cls_transport,
                 "url": self.mcp_cls_url,
             },
-            "monitor": {
-                "transport": self.mcp_monitor_transport,
-                "url": self.mcp_monitor_url,
-            }
         }
+        return {name: server for name, server in servers.items() if server.get("url")}
 
 
 # 全局配置实例

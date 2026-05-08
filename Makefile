@@ -51,8 +51,8 @@ help:
 	@echo "$(CYAN)【MCP 服务管理】$(NC)"
 	@echo "  $(YELLOW)make start-cls$(NC)     - 📋 启动 CLS MCP 服务"
 	@echo "  $(YELLOW)make stop-cls$(NC)      - 🛑 停止 CLS MCP 服务"
-	@echo "  $(YELLOW)make start-monitor$(NC) - 📊 启动 Monitor MCP 服务"
-	@echo "  $(YELLOW)make stop-monitor$(NC)  - 🛑 停止 Monitor MCP 服务"
+	@echo "  $(YELLOW)make start-monitor$(NC) - 📊 启动可选 Monitor MCP 示例服务"
+	@echo "  $(YELLOW)make stop-monitor$(NC)  - 🛑 停止可选 Monitor MCP 示例服务"
 	@echo "  $(YELLOW)make start-api$(NC)     - 🚀 启动 FastAPI 服务"
 	@echo "  $(YELLOW)make stop-api$(NC)      - 🛑 停止 FastAPI 服务"
 	@echo ""
@@ -87,7 +87,7 @@ help:
 	@echo "$(GREEN)═══════════════════════════════════════════════════════$(NC)"
 	@echo "$(GREEN)使用示例:$(NC)"
 	@echo "  1. 一键初始化: $(YELLOW)make init$(NC)"
-	@echo "  2. 启动服务:   $(YELLOW)make start$(NC) (自动启动 CLS + Monitor MCP + FastAPI)"
+	@echo "  2. 启动服务:   $(YELLOW)make start$(NC) (自动启动 CLS MCP + FastAPI)"
 	@echo "  3. 检查状态:   $(YELLOW)make status-mcp$(NC)"
 	@echo "  4. 停止服务:   $(YELLOW)make stop$(NC)"
 	@echo "$(GREEN)═══════════════════════════════════════════════════════$(NC)"
@@ -298,9 +298,6 @@ start:
 	@$(MAKE) start-cls
 	@sleep 1
 	@echo ""
-	@$(MAKE) start-monitor
-	@sleep 1
-	@echo ""
 	@$(MAKE) start-api
 	@echo ""
 	@echo "$(GREEN)═══════════════════════════════════════════════════════$(NC)"
@@ -331,8 +328,6 @@ stop:
 	@$(MAKE) stop-api
 	@echo ""
 	@$(MAKE) stop-cls
-	@echo ""
-	@$(MAKE) stop-monitor
 	@echo ""
 	@echo "$(GREEN)═══════════════════════════════════════════════════════$(NC)"
 	@echo "$(GREEN)✅ 所有服务已停止！$(NC)"

@@ -25,16 +25,6 @@ if errorlevel 1 (
 )
 echo.
 
-REM 停止 Monitor MCP 服务
-echo [3/4] 停止 Monitor MCP 服务...
-taskkill /FI "WINDOWTITLE eq Monitor MCP Server*" /F >nul 2>&1
-if errorlevel 1 (
-    echo [信息] Monitor MCP 服务未运行或已停止
-) else (
-    echo [成功] Monitor MCP 服务已停止
-)
-echo.
-
 REM 停止 Docker 容器
 echo [4/4] 停止 Milvus 容器...
 docker ps --format "{{.Names}}" | findstr "milvus" >nul 2>&1

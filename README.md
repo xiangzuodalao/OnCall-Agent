@@ -100,9 +100,6 @@ timeout /t 10
 # 启动 CLS 日志查询服务（新开一个 PowerShell 窗口）
 python mcp_servers/cls_server.py
 
-# 启动 Monitor 监控服务（新开一个 PowerShell 窗口）
-python mcp_servers/monitor_server.py
-
 # 8. 启动 FastAPI 主服务（新开一个 PowerShell 窗口）
 # 注意：日志会自动输出到 logs\app_YYYY-MM-DD.log
 python -m uvicorn app.main:app --host 0.0.0.0 --port 9900
@@ -218,7 +215,7 @@ super_biz_agent_py/
 │   └── styles.css                          # 样式表
 ├── mcp_servers/                            # MCP 服务器
 │   ├── cls_server.py                       # CLS 日志查询服务
-│   ├── monitor_server.py                   # 监控数据服务
+│   ├── monitor_server.py                   # 可选 Monitor MCP 示例服务
 │   └── README.md                           # MCP 服务说明
 ├── aiops-docs/                             # 运维知识库（Markdown 文档）
 ├── logs/                                   # 日志目录（Loguru 自动创建）
@@ -266,9 +263,6 @@ MCP_CLS_URL=http://localhost:8003/mcp
 # MCP_CLS_TRANSPORT=sse
 # MCP_CLS_URL=https://mcp-api.tencent-cloud.com/sse/your-private-id
 
-# 本地监控 MCP
-MCP_MONITOR_TRANSPORT=streamable-http
-MCP_MONITOR_URL=http://localhost:8004/mcp
 ```
 
 ## 🎯 AIOps 智能运维
