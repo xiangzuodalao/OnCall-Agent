@@ -57,6 +57,8 @@ make init
 make start
 ```
 
+`make start` 默认使用 `API_HOST=0.0.0.0` 启动 FastAPI，便于从局域网其他机器访问；如只允许本机访问，可使用 `make start API_HOST=127.0.0.1`。
+
 #### Windows 环境（PowerShell/CMD）
 
 如果Windows 不支持 `make` 命令，可以手动执行以下步骤以启动服务：
