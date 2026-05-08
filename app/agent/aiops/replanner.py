@@ -109,6 +109,19 @@ response_prompt = ChatPromptTemplate.from_messages(
 
 
 async def replanner(state: PlanExecuteState) -> Dict[str, Any]:
+    try:
+        return await _replanner_impl(state)
+    except Exception as e:
+        logger.error(f"Replanner unexpected failure: {e}", exc_info=True)
+        llm = ChatQwen(
+            model=config.rag_model,
+            api_key=config.dashscope_api_key,
+            temperature=0
+        )
+        return await _generate_response(state, llm)
+
+
+async def _replanner_impl(state: PlanExecuteState) -> Dict[str, Any]:
     """
     重新规划节点：决定是继续、调整计划还是生成最终响应
 
