@@ -723,7 +723,7 @@ class SuperBizAgentApp {
                 }
             } else {
                 // HTTP 成功但业务失败
-                throw new Error(data.message || '请求失败');
+                throw new Error(data?.data?.errorMessage || data.message || 'Request failed');
             }
         } catch (error) {
             // 出错时也要移除等待提示消息
@@ -1149,7 +1149,7 @@ class SuperBizAgentApp {
                 const successMessage = `${file.name} 上传到知识库成功`;
                 this.addMessage('assistant', successMessage, false, true);
             } else {
-                throw new Error(data.message || '上传失败');
+                throw new Error(data?.data?.errorMessage || data.message || 'Request failed');
             }
         } catch (error) {
             console.error('文件上传失败:', error);

@@ -115,14 +115,18 @@ class RagAgentService:
             return
 
         # 使用全局 MCP 客户端管理器（带重试拦截器）
-        mcp_client = await get_mcp_client_with_retry()
+        try:
+            mcp_client = await get_mcp_client_with_retry()
 
         # 获取 MCP 工具
-        mcp_tools = await mcp_client.get_tools()
-        logger.info(f"成功加载 {len(mcp_tools)} 个 MCP 工具")
+            mcp_tools = await mcp_client.get_tools()
+            logger.info(f"Successfully loaded {len(mcp_tools)} MCP tools")
 
         # 将 MCP 工具添加到实例变量中
-        self.mcp_tools = mcp_tools
+            self.mcp_tools = mcp_tools
+        except Exception as e:
+            logger.exception(f"Failed to load MCP tools; continuing with built-in tools only: {e}")
+            self.mcp_tools = []
 
         # 合并所有工具
         all_tools = self.tools + self.mcp_tools
